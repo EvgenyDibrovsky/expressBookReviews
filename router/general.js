@@ -28,7 +28,6 @@ public_users.post("/register", (req, res) => {
 
 // Task 10:
 public_users.get("/", function (req, res) {
-  // Имитация асинхронной операции
   new Promise((resolve, reject) => {
     if (books) {
       resolve(books);
@@ -60,8 +59,6 @@ public_users.get("/", function (req, res) {
 // Get book details based on ISBN using Promise
 public_users.get("/isbn/:isbn", function (req, res) {
   const isbn = req.params.isbn;
-
-  // Имитация асинхронной операции с использованием Promise
   new Promise((resolve, reject) => {
     const book = books[isbn];
     if (book) {
@@ -94,7 +91,6 @@ public_users.get("/isbn/:isbn", function (req, res) {
 // Get book details based on author using Promise
 public_users.get("/author/:author", function (req, res) {
   const author = req.params.author;
-
   new Promise((resolve, reject) => {
     const booksByAuthor = Object.values(books).filter((book) => book.author === author);
     if (booksByAuthor.length > 0) {
@@ -127,7 +123,6 @@ public_users.get("/author/:author", function (req, res) {
 // Get all books based on title using Promise
 public_users.get("/title/:title", function (req, res) {
   const title = req.params.title.toLowerCase();
-
   new Promise((resolve, reject) => {
     const foundBooks = Object.values(books).filter((book) => book.title.toLowerCase().includes(title));
     if (foundBooks.length > 0) {
