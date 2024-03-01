@@ -1,3 +1,5 @@
+require("dotenv").config();
+
 const express = require("express");
 const jwt = require("jsonwebtoken");
 const session = require("express-session");
@@ -11,20 +13,21 @@ app.use(express.json());
 app.use("/customer", session({ secret: "fingerprint_customer", resave: true, saveUninitialized: true }));
 
 app.use("/customer/auth/*", function auth(req, res, next) {
-  if (req.session.authorization) {
-    const token = req.session.authorization["accessToken"];
+  const authHeader = req.headers.authorization;
+  const token = authHeader && authHeader.split(" ")[1]; // Извлекаем токен из заголовка
 
-    jwt.verify(token, "YOUR_SECRET_KEY", (err, user) => {
-      if (!err) {
-        req.user = user;
-        next();
-      } else {
-        return res.status(403).json({ message: "User not authenticated" });
-      }
-    });
-  } else {
-    return res.status(403).json({ message: "User not logged in" });
+  if (token == null) {
+    return res.status(401).json({ message: "User not logged in" });
   }
+
+  jwt.verify(token, process.env.JWT_SECRET_KEY, (err, user) => {
+    if (err) {
+      return res.status(403).json({ message: "User not authenticated" });
+    }
+
+    req.user = user;
+    next();
+  });
 });
 
 const PORT = 5000;
